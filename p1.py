@@ -1,26 +1,38 @@
 # p1.py
 import numpy as np
+import nnfs
+from nnfs.datasets import spiral_data
 
-np.random.seed(0)
+nnfs.init()  # for instruction reproducibility
 
-# Other neurons will sent outputs to this neuron as inputs
+# so there is 3 samples being displayed here
 X = [[1, 2, 3, 2.5],
      [2.0, 5.0, -1.0, 2.0],
      [-1.5, 2.7, 3.3, -0.8]]
 
+X, y = spiral_data(100, 3)
 
-class LayerDense:
+class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
         self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)
+        # zeroes parameter in parens because shape is passed as tuple
         self.biases = np.zeros((1, n_neurons))
 
     def forward(self, inputs):
-        self.output = np.dot(inputs , self.weights) + self.biases
+        # noinspection PyAttributeOutsideInit
+        self.output = np.dot(inputs, self.weights) + self.biases
 
 
-layer1 = LayerDense(4, 5)
-layer2 = LayerDense(5, 2)
+class Activation_ReLU:
+    def forward(self, inputs):
+        self.output = np.maximum(0, inputs)
 
+
+# create two layers
+layer1 = Layer_Dense(2, 5)
+activation1 = Activation_ReLU()
+# forward prop test data
 layer1.forward(X)
-layer2.forward(layer1.output)
-print(layer2.output)
+
+activation1.forward(layer1.output)
+print(activation1.output)
